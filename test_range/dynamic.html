@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperNova Test Range — Dynamic &amp; Frames</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topnav">
+  <span class="brand">🛰️ SuperNova Test Range</span>
+  <a href="index.html">Home</a>
+  <a href="login.html">Login</a>
+  <a href="profile.html">Profile</a>
+  <a href="shop.html">Shop</a>
+  <a href="checkout.html">Checkout</a>
+  <a href="documents.html">Documents &amp; Faces</a>
+  <a href="dynamic.html" class="active">Dynamic &amp; Frames</a>
+</header>
+
+<main>
+  <h1>Dynamic Content &amp; Frames</h1>
+  <p class="lede">Tests the parts of your architecture the research summary flagged as unresolved risks: content that isn't there on first load, and cross-origin content your DOM scanner structurally cannot reach.</p>
+
+  <h2>Delayed offer (appears after 2.5s)</h2>
+  <div class="card" id="offerZone">
+    <p style="color:var(--muted);">Loading offer…</p>
+  </div>
+  <p class="note">If you give it the task "wait for the offer and click Claim Offer" before this loads, a good agent should scroll/retry rather than report "element not found" and give up. This simulates an AJAX-loaded banner, common on real sites.</p>
+
+  <h2>Infinite scroll list</h2>
+  <div class="card" style="max-height:220px; overflow-y:auto;" id="scrollBox">
+    <div id="scrollList"></div>
+  </div>
+  <p class="note">New items get appended as you scroll this box — tests whether a "scroll" action followed by a fresh DOM scan actually picks up newly-added elements, or works off a stale tree.</p>
+
+  <h2>Cross-origin iframe (genuine DOM boundary)</h2>
+  <div class="card">
+    <p>The frame below loads <code>https://example.com</code> — a real different origin. Your content script's <code>document.querySelectorAll</code> on the top page <strong>cannot</strong> see inside this frame at all; that's a same-origin-policy wall, not a bug. This is exactly the case your research doc's "vision fallback for iframes" plan is meant to cover — a screenshot can still see it, DOM extraction structurally can't.</p>
+    <iframe src="https://example.com" style="width:100%; height:160px; border:1px solid var(--border); border-radius:8px; background:#fff;"></iframe>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      document.getElementById("offerZone").innerHTML = `
+        <p><strong>🎉 Limited-time test offer!</strong> Get 20% off your next (fake) order.</p>
+        <button id="claimBtn">Claim Offer</button>
+      `;
+      document.getElementById("claimBtn").addEventListener("click", () => {
+        alert("Offer 'claimed' (test-only).");
+      });
+    }, 2500);
+
+    let itemCount = 0;
+    function addItems(n) {
+      const list = document.getElementById("scrollList");
+      for (let i = 0; i < n; i++) {
+        itemCount++;
+        const div = document.createElement("div");
+        div.style.padding = "8px 0";
+        div.style.borderBottom = "1px solid var(--border)";
+        div.textContent = `Log entry #${itemCount} — event recorded at test-time`;
+        list.appendChild(div);
+      }
+    }
+    addItems(6);
+    document.getElementById("scrollBox").addEventListener("scroll", (e) => {
+      const el = e.target;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) addItems(4);
+    });
+  </script>
+</main>
+<footer>SuperNova Test Range · local test fixture, not a real product</footer>
+</body>
+</html>

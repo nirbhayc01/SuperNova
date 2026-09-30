@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperNova Test Range — Documents &amp; Faces</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topnav">
+  <span class="brand">🛰️ SuperNova Test Range</span>
+  <a href="index.html">Home</a>
+  <a href="login.html">Login</a>
+  <a href="profile.html">Profile</a>
+  <a href="shop.html">Shop</a>
+  <a href="checkout.html">Checkout</a>
+  <a href="documents.html" class="active">Documents &amp; Faces</a>
+  <a href="dynamic.html">Dynamic &amp; Frames</a>
+</header>
+
+<main>
+  <h1>Documents &amp; Faces</h1>
+  <p class="lede"><span class="tag vision">Vision</span> <span class="tag ocr">OCR</span> The heaviest page on this site — this is where you should point "Run Local Vision AI" directly. Every ID card here is drawn live with <code>&lt;canvas&gt;</code>, so the text exists only as pixels: a genuine OCR target, not something your DOM scanner could ever catch.</p>
+
+  <h2>Team photo (multiple faces, different sizes)</h2>
+  <div class="card">
+    <p class="note">Recreates the "crowd photo" failure mode on purpose: several real face-shaped photos at different scales in one frame. Good box = tight around each face. Bad box = one giant black rectangle over the whole group, or boxes on non-face regions.</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+      <img class="avatar lg" src="https://i.pravatar.cc/220?img=5">
+      <img class="avatar lg" src="https://i.pravatar.cc/220?img=8">
+      <img class="avatar" src="https://i.pravatar.cc/150?img=15">
+      <img class="avatar" src="https://i.pravatar.cc/150?img=22">
+      <img class="avatar" style="width:44px;height:44px;" src="https://i.pravatar.cc/100?img=31">
+    </div>
+  </div>
+
+  <h2>Fake ID documents (pixels only — OCR targets)</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <canvas id="aadhaarCanvas" class="doc-render" width="340" height="200"></canvas>
+      <p class="note">Aadhaar-style card. Number format matches your <code>aadhaar</code> pattern.</p>
+    </div>
+    <div class="card">
+      <canvas id="panCanvas" class="doc-render" width="340" height="200"></canvas>
+      <p class="note">PAN-style card. Matches your <code>pan</code> pattern (5 letters, 4 digits, 1 letter).</p>
+    </div>
+    <div class="card">
+      <canvas id="passportCanvas" class="doc-render" width="340" height="200"></canvas>
+      <p class="note">Passport-style page with a name, DOB, and passport number — checks whether your NER/pattern set catches ID formats you haven't explicitly regex'd.</p>
+    </div>
+    <div class="card">
+      <canvas id="controlCanvas" class="doc-render" width="340" height="200"></canvas>
+      <p class="note"><strong>Control image — contains no PII at all.</strong> If this gets redacted, that's an over-redaction / false-positive bug worth writing down for your precision metric.</p>
+    </div>
+  </div>
+
+  <script>
+    function labelHeader(ctx, title) {
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, 340, 200);
+      ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, 340, 40);
+      ctx.fillStyle = "#38bdf8"; ctx.font = "bold 15px Arial"; ctx.fillText(title, 14, 26);
+    }
+
+    // Aadhaar-style
+    (() => {
+      const ctx = document.getElementById("aadhaarCanvas").getContext("2d");
+      labelHeader(ctx, "GOVT. OF TESTISTAN — IDENTITY CARD");
+      ctx.fillStyle = "#111827"; ctx.font = "bold 15px Arial"; ctx.fillText("Name: Ravi Kumar Desai", 14, 76);
+      ctx.font = "14px Arial";
+      ctx.fillText("DOB: 03-11-1990", 14, 100);
+      ctx.fillText("Gender: Male", 14, 124);
+      ctx.font = "bold 18px monospace"; ctx.fillStyle = "#0f172a"; ctx.fillText("3456 7891 2345", 14, 164);
+      ctx.strokeStyle = "#cbd5e1"; ctx.strokeRect(250, 55, 74, 92);
+      ctx.fillStyle = "#94a3b8"; ctx.font = "10px Arial"; ctx.fillText("photo", 270, 105);
+    })();
+
+    // PAN-style
+    (() => {
+      const ctx = document.getElementById("panCanvas").getContext("2d");
+      labelHeader(ctx, "PERMANENT ACCOUNT NUMBER CARD");
+      ctx.fillStyle = "#111827"; ctx.font = "bold 15px Arial"; ctx.fillText("Name: Priya R. Menon", 14, 76);
+      ctx.font = "14px Arial"; ctx.fillText("Father's Name: Suresh Menon", 14, 100);
+      ctx.fillText("DOB: 22-07-1995", 14, 124);
+      ctx.font = "bold 20px monospace"; ctx.fillStyle = "#0f172a"; ctx.fillText("BXPQR1234M", 14, 164);
+    })();
+
+    // Passport-style
+    (() => {
+      const ctx = document.getElementById("passportCanvas").getContext("2d");
+      labelHeader(ctx, "TESTISTAN PASSPORT");
+      ctx.fillStyle = "#111827"; ctx.font = "bold 15px Arial"; ctx.fillText("Surname: Fernandes", 14, 76);
+      ctx.font = "14px Arial"; ctx.fillText("Given name: Clara Maria", 14, 100);
+      ctx.fillText("Date of birth: 09 Jan 1988", 14, 124);
+      ctx.fillText("Passport No: T4471029", 14, 148);
+      ctx.strokeStyle = "#cbd5e1"; ctx.strokeRect(250, 55, 74, 92);
+      ctx.fillStyle = "#94a3b8"; ctx.font = "10px Arial"; ctx.fillText("photo", 270, 105);
+    })();
+
+    // Control image — genuinely no PII
+    (() => {
+      const ctx = document.getElementById("controlCanvas").getContext("2d");
+      ctx.fillStyle = "#e0f2fe"; ctx.fillRect(0, 0, 340, 200);
+      ctx.fillStyle = "#0284c7"; ctx.font = "bold 16px Arial"; ctx.fillText("Quarterly Sales Chart (fake data)", 14, 30);
+      const vals = [40, 90, 60, 120, 75];
+      vals.forEach((v, i) => {
+        ctx.fillStyle = "#38bdf8";
+        ctx.fillRect(30 + i * 60, 190 - v, 40, v);
+        ctx.fillStyle = "#0f172a"; ctx.font = "11px Arial"; ctx.fillText("Q" + (i+1), 42 + i * 60, 200);
+      });
+    })();
+  </script>
+</main>
+<footer>SuperNova Test Range · local test fixture, not a real product</footer>
+</body>
+</html>

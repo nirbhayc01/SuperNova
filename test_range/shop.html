@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperNova Test Range — Shop</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topnav">
+  <span class="brand">🛰️ SuperNova Test Range</span>
+  <a href="index.html">Home</a>
+  <a href="login.html">Login</a>
+  <a href="profile.html">Profile</a>
+  <a href="shop.html" class="active">Shop</a>
+  <a href="checkout.html">Checkout</a>
+  <a href="documents.html">Documents &amp; Faces</a>
+  <a href="dynamic.html">Dynamic &amp; Frames</a>
+</header>
+
+<main>
+  <h1>Test Shop</h1>
+  <p class="lede"><span class="tag dom">Task accuracy</span> Give it a real, checkable task: "search for headphones and open the first result", or "find the cheapest item and click view details". Every product card shares identical classes and button labels — a good check for whether selectors resolve to the exact right element.</p>
+
+  <div class="card">
+    <label for="searchInput">Search products</label>
+    <input id="searchInput" type="search" name="q" placeholder="Search for headphones, watch, bag...">
+  </div>
+
+  <h2>Products</h2>
+  <div class="grid cols-3" id="productGrid"></div>
+
+  <div style="text-align:center; margin-top:18px;">
+    <button class="secondary" id="loadMoreBtn">Load more products</button>
+  </div>
+  <p class="note">"Load more" injects new DOM nodes after the click, with no full page reload — tests whether the agent's next DOM scan picks up freshly-added elements rather than working from a stale snapshot.</p>
+
+  <script>
+    const products = [
+      { name: "Wireless Headphones", price: 59.99, img: "🎧" },
+      { name: "Smart Watch", price: 129.00, img: "⌚" },
+      { name: "Canvas Backpack", price: 39.50, img: "🎒" },
+      { name: "Mechanical Keyboard", price: 89.00, img: "⌨️" },
+      { name: "Noise-Cancelling Earbuds", price: 74.25, img: "🎧" },
+      { name: "Desk Lamp", price: 22.00, img: "💡" },
+      { name: "Travel Mug", price: 14.99, img: "☕" },
+      { name: "Yoga Mat", price: 27.75, img: "🧘" },
+      { name: "Bluetooth Speaker", price: 45.00, img: "🔊" }
+    ];
+    const extraBatch = [
+      { name: "Laptop Stand", price: 32.00, img: "💻" },
+      { name: "Wireless Mouse", price: 19.99, img: "🖱️" },
+      { name: "Phone Tripod", price: 16.50, img: "📱" }
+    ];
+
+    function renderProducts(list, container) {
+      list.forEach((p, i) => {
+        const card = document.createElement("div");
+        card.className = "card product-card";
+        card.innerHTML = `
+          <div style="font-size:40px; text-align:center;">${p.img}</div>
+          <h3 style="margin:10px 0 2px;">${p.name}</h3>
+          <p style="color:var(--muted); margin:0 0 10px;">$${p.price.toFixed(2)}</p>
+          <button class="view-btn">View details</button>
+          <button class="secondary cart-btn" style="margin-top:6px;">Add to Cart</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    const grid = document.getElementById("productGrid");
+    renderProducts(products, grid);
+
+    document.getElementById("loadMoreBtn").addEventListener("click", () => {
+      renderProducts(extraBatch, grid);
+      document.getElementById("loadMoreBtn").remove();
+    });
+
+    grid.addEventListener("click", (e) => {
+      if (e.target.classList.contains("view-btn")) {
+        const name = e.target.closest(".product-card").querySelector("h3").textContent;
+        alert(`Opened: ${name} (test-only, no real product page)`);
+      } else if (e.target.classList.contains("cart-btn")) {
+        e.target.textContent = "Added ✓";
+      }
+    });
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll(".product-card").forEach(card => {
+          const match = card.querySelector("h3").textContent.toLowerCase().includes(q);
+          card.style.display = (q === "" || match) ? "block" : "none";
+        });
+      }
+    });
+  </script>
+</main>
+<footer>SuperNova Test Range · local test fixture, not a real product</footer>
+</body>
+</html>

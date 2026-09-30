@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperNova Test Range — Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topnav">
+  <span class="brand">🛰️ SuperNova Test Range</span>
+  <a href="index.html">Home</a>
+  <a href="login.html" class="active">Login</a>
+  <a href="profile.html">Profile</a>
+  <a href="shop.html">Shop</a>
+  <a href="checkout.html">Checkout</a>
+  <a href="documents.html">Documents &amp; Faces</a>
+  <a href="dynamic.html">Dynamic &amp; Frames</a>
+</header>
+
+<main>
+  <h1>Sign in</h1>
+  <p class="lede"><span class="tag dom">DOM</span> Tests structured-field redaction (<code>type=password</code>, <code>type=email</code>) — these should be redacted at the DOM level before any screenshot or payload is built, with zero ML needed.</p>
+
+  <div class="card">
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" autocomplete="email" placeholder="test.user@supernova-test.dev" value="test.user@supernova-test.dev">
+
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" value="Sup3rNova!2026">
+
+    <label style="display:flex; align-items:center; gap:6px; margin-top:14px;">
+      <input type="checkbox" id="remember" style="width:auto;"> Remember me on this device
+    </label>
+
+    <button id="loginBtn" style="margin-top:16px;">Log in</button>
+    <button class="secondary" style="margin-top:16px;">Forgot password?</button>
+  </div>
+
+  <h2>Support text (plain-text PII, not in a form field)</h2>
+  <div class="card">
+    <p><span class="tag ocr">Text-node</span> If you're having trouble, contact our test support desk at <strong>help@supernova-test.dev</strong> or call <strong>+1-415-555-0199</strong>. This paragraph is plain page text, not an input field — it should be caught by your live text-node scrubber, not the DOM field-type check.</p>
+  </div>
+
+  <h2>False-positive check</h2>
+  <div class="card">
+    <p class="decoy">Session reference: <strong>4829 1039 2847 1023</strong> — a 16-digit grouped number that is <em>not</em> a credit card. This is a deliberate stress test for your <code>credit_card</code> regex, which currently matches any 16-digit grouped number regardless of context. If this gets flagged as a credit card, that's a real precision gap worth noting in your evaluation report.</p>
+  </div>
+
+  <script>
+    document.getElementById("loginBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      alert("Test login submitted (no real backend — this is just a DOM interaction target).");
+    });
+  </script>
+</main>
+<footer>SuperNova Test Range · local test fixture, not a real product</footer>
+</body>
+</html>
