@@ -1,0 +1,18 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Generated at runtime
+server/redacted_screenshot.jpg
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
